@@ -32,8 +32,17 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->post('/auth/register', 'Auth::register');
+$routes->post('/auth/login', 'Auth::login');
+$routes->get('/search/recipes', 'Recipes::sugestRecipe');
 $routes->resource('recipe-categories', ['controller' =>'RecipeCategories']);
 $routes->resource('recipes', ['controller' =>'Recipes']);
+$routes->resource('serve-histories', ['controller' =>'ServeHistories', 'filter' => 'auth']);
+// $routes->get('/serve-histories', 'ServeHistories::index');
+// $routes->get('/serve-histories/:id', 'ServeHistories::show');
+// $routes->post('/serve-histories', 'ServeHistories::create');
+// $routes->put('/serve-histories', 'ServeHistories::update');
+$routes->post('/serve-histories/(:segment)/reaction', 'ServeHistories::addReaction/$1');
 
 /*
  * --------------------------------------------------------------------

@@ -100,8 +100,10 @@ class RecipeCategories extends ResourceController
             'name' => 'required'
         ];
         if (!$this->validate($rules)) {
-            $respond = $this->respondHelper->generateRespond($this->validator->getErrors(), 400);
-            return  $this->respond($respond, 400);
+            foreach ($this->validator->getErrors() as $key => $value) {
+                $respond = $this->respondHelper->generateRespond($value, 400);
+                return  $this->respond($respond, 400);
+            }
         }else{
             $data = [
                 'name' => $this->request->getVar('name')

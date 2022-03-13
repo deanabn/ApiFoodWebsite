@@ -110,4 +110,16 @@ class RecipesModel extends Model
         );
         return $query->getResultArray();
     }
+
+    public function getRecipeLike($q,$limit){
+        $query = $this->db->query(
+            "SELECT 
+                id,
+                name
+            FROM recipes
+            WHERE name like '%$q%'
+            LIMIT $limit"
+        );
+        return $query->getResultArray();
+    }
 }

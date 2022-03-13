@@ -115,8 +115,10 @@ class Recipes extends ResourceController
             "steps" => 'required'
         ];
         if (!$this->validate($rules)) {
-            $respond = $this->respondHelper->generateRespond($this->validator->getErrors(), 400);
-            return  $this->respond($respond, 400);
+            foreach ($this->validator->getErrors() as $key => $value) {
+                $respond = $this->respondHelper->generateRespond($value, 400);
+                return  $this->respond($respond, 400);
+            }
         }
 
         if (!$this->request->getVar()) {
@@ -185,8 +187,10 @@ class Recipes extends ResourceController
             "steps" => 'required'
         ];
         if (!$this->validate($rules)) {
-            $respond = $this->respondHelper->generateRespond($this->validator->getErrors(), 400);
-            return  $this->respond($respond, 400);
+            foreach ($this->validator->getErrors() as $key => $value) {
+                $respond = $this->respondHelper->generateRespond($value, 400);
+                return  $this->respond($respond, 400);
+            }
         }
 
         $dataRecipe = [
@@ -246,5 +250,29 @@ class Recipes extends ResourceController
         }
 
         return $this->respond("Error", 500);
+    }
+
+    public function sugestRecipe()
+    {
+        $limit = $this->request->getVar('limit');
+        $query = $this->request->getVar('q');
+
+        if ($limit < 1 AND $limit != null) {
+            $respond = $this->respondHelper->generateRespond("Invalid limit value", 400);
+            return $this->respond($respond, 400);
+        }
+
+        if (strlen($query) < 2) {
+            $respond = $this->respondHelper->generateRespond("Search query minimum 2 character", 400);
+            return $this->respond($respond, 400);
+        }
+
+        if ($limit == null OR $limit == '') {
+            $limit = 5;
+        }
+
+        $result = $this->mrecipes->getRecipeLike($query,$limit);
+        $respond = $this->respondHelper->generateRespond($result, 200);
+        return $this->respond($respond, 200);
     }
 }
