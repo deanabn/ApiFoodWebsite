@@ -152,6 +152,10 @@ class ServeHistories extends ResourceController
         $respond = $this->respondHelper->generateRespond("Cannot Skip Step", 400);
         if ($stepInput - 1 != $stepNow) return $this->respond($respond, 400);
 
+        $user = $this->auth->get_user($this->request->getServer('HTTP_AUTHORIZATION'));
+        $respond = $this->respondHelper->generateRespond("UserId Not Match", 401);
+        if ($user->uid != $dataServe[0]['userId']) return $this->respond($respond, 401);
+
         if ($stepInput == $stepTotal) {
             $this->mserve->update($id, ['nStepDone' => $stepInput, 'status' => 'need-rating']);
         }elseif ($stepInput < $stepTotal) {
@@ -205,6 +209,10 @@ class ServeHistories extends ResourceController
 
         $respond = $this->respondHelper->generateRespond('Already Done', 400);
         if ($dataServe[0]['status'] != 'need-rating') return $this->respond($respond, 400);
+
+        $user = $this->auth->get_user($this->request->getServer('HTTP_AUTHORIZATION'));
+        $respond = $this->respondHelper->generateRespond("UserId Not Match", 401);
+        if ($user->uid != $dataServe[0]['userId']) return $this->respond($respond, 401);
 
         $reaction = $this->request->getVar('reaction');
         $this->mserve->update($id, ['reaction' => $reaction, 'status' => 'done']);
